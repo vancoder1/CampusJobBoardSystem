@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-content}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+<div class="container mt-5">
+    <h2>Applicants</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Email</th>
+            <th>Applied At</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="app : ${applications}">
+            <td th:text="${app.student.fullName}"></td>
+            <td th:text="${app.student.email}"></td>
+            <td th:text="${app.appliedAt}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="/employer/dashboard" class="btn btn-secondary">Back</a>
+</div>
+</body>
+</html>

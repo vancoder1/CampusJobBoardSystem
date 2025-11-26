@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <div th:fragment="head-content">
+        <meta charset="UTF-8">
+        <title>Campus Job Board</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    </div>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" th:fragment="navbar">
+    <div class="container">
+        <a class="navbar-brand" href="/">CampusJobs</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <!-- Public Link -->
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+
+                <!-- Student Links -->
+                <li class="nav-item" sec:authorize="hasRole('STUDENT')">
+                    <a class="nav-link" href="/student/dashboard">Browse Jobs</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('STUDENT')">
+                    <a class="nav-link" href="/student/my-applications">My Applications</a>
+                </li>
+
+                <!-- Employer Links -->
+                <li class="nav-item" sec:authorize="hasRole('EMPLOYER')">
+                    <a class="nav-link" href="/employer/dashboard">My Jobs</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('EMPLOYER')">
+                    <a class="nav-link" href="/employer/job/new">Post a Job</a>
+                </li>
+
+                <!-- Admin Links -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" href="/admin/dashboard">Admin Panel</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <!-- If NOT logged in -->
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link btn btn-primary text-white" href="/register">Register</a>
+                </li>
+
+                <!-- If LOGGED in -->
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <span class="navbar-text me-3">Welcome, <span sec:authentication="name">User</span></span>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link btn btn-danger text-white btn-sm" href="/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

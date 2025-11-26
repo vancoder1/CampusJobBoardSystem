@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-content}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container mt-5 text-center">
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to Campus Job Board</h1>
+        <p class="lead">Connecting Students with On-Campus Opportunities.</p>
+        <hr class="my-4">
+        <p>Are you a student looking for work? Or an employer looking for talent?</p>
+        <a class="btn btn-primary btn-lg" href="/register" role="button">Get Started</a>
+        <a class="btn btn-outline-secondary btn-lg" href="/login" role="button">Login</a>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

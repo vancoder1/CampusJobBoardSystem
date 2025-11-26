@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-content}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container mt-5">
+    <h2>My Job Postings</h2>
+    <a href="/employer/job/new" class="btn btn-primary mb-3">Post New Job</a>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="job : ${jobs}">
+            <td th:text="${job.title}"></td>
+            <td th:text="${job.category}"></td>
+            <td>
+                <span th:if="${job.status.name() == 'APPROVED'}" class="badge bg-success">Approved</span>
+                <span th:if="${job.status.name() == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
+                <span th:if="${job.status.name() == 'REJECTED'}" class="badge bg-danger">Rejected</span>
+            </td>
+            <td>
+                <a th:href="@{/employer/job/{id}/applications(id=${job.id})}" class="btn btn-info btn-sm">View Applicants</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

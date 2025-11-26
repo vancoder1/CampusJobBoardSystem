@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-content}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container mt-5">
+    <h2>Available Jobs</h2>
+
+    <div th:if="${param.applied}" class="alert alert-success">Application submitted successfully!</div>
+    <div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}"></div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4" th:each="job : ${jobs}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${job.title}">Job Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted" th:text="${job.employer.fullName}">Company</h6>
+                    <p class="card-text" th:text="${job.description}">Desc</p>
+                    <p><strong>Salary:</strong> $<span th:text="${job.salary}"></span></p>
+                    <p><strong>Location:</strong> <span th:text="${job.location}"></span></p>
+                </div>
+                <div class="card-footer">
+                    <form th:action="@{/student/job/{id}/apply(id=${job.id})}" method="post">
+                        <button type="submit" class="btn btn-primary w-100">Apply Now</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

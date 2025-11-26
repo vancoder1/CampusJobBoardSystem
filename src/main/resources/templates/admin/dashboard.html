@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-content}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container mt-5">
+    <h2>Admin Dashboard - Manage Jobs</h2>
+    <table class="table table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th>Job Title</th>
+            <th>Employer</th>
+            <th>Current Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="job : ${jobs}">
+            <td th:text="${job.title}"></td>
+            <td th:text="${job.employer.fullName}"></td>
+            <td th:text="${job.status}"></td>
+            <td>
+                <div th:if="${job.status.name() == 'PENDING'}">
+                    <form th:action="@{/admin/job/{id}/approve(id=${job.id})}" method="post" style="display:inline;">
+                        <button class="btn btn-success btn-sm">Approve</button>
+                    </form>
+                    <form th:action="@{/admin/job/{id}/reject(id=${job.id})}" method="post" style="display:inline;">
+                        <button class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                </div>
+                <span th:unless="${job.status.name() == 'PENDING'}" class="text-muted">No actions</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

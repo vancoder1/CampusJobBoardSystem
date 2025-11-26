@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-content}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Register</div>
+                <div class="card-body">
+                    <form th:action="@{/saveUser}" th:object="${user}" method="post">
+
+                        <div class="mb-3">
+                            <label>Full Name</label>
+                            <input type="text" th:field="*{fullName}" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input type="email" th:field="*{email}" class="form-control" required>
+                            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Password</label>
+                            <input type="password" th:field="*{password}" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>I am a:</label>
+                            <select th:field="*{role}" class="form-select">
+                                <option value="STUDENT">Student</option>
+                                <option value="EMPLOYER">Employer</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
