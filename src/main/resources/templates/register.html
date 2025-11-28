@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head-content}"></head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-content}">
+    <title>Campus Job Board</title>
+</head>
 <body>
 <div th:replace="~{fragments/header :: navbar}"></div>
 
@@ -22,23 +24,23 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" th:field="*{fullName}" th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'" class="form-control" placeholder="Enter your full name" required>
+                                <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{fullName}" id="fullName" th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'" class="form-control" placeholder="Enter your full name" required>
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Email <span class="text-danger">*</span></label>
-                                <input type="email" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" class="form-control" placeholder="Enter your email" required>
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" th:field="*{email}" id="email" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" class="form-control" placeholder="Enter your email" required>
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Password <span class="text-danger">*</span></label>
-                                <input type="password" th:field="*{password}" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" class="form-control" placeholder="Minimum 8 characters" required>
+                                <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" th:field="*{password}" id="password" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" class="form-control" placeholder="Minimum 8 characters" required>
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">I am a: <span class="text-danger">*</span></label>
-                                <select th:field="*{role}" class="form-select" required>
+                                <label for="role" class="form-label">I am a: <span class="text-danger">*</span></label>
+                                <select th:field="*{role}" id="role" class="form-select" required>
                                     <option value="">-- Select Role --</option>
                                     <option value="STUDENT">Student</option>
                                     <option value="EMPLOYER">Employer</option>

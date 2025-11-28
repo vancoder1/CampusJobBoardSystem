@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,9 +56,8 @@ class UserServiceTest {
         when(userRepository.findByEmail(dto.getEmail())).thenReturn(Optional.of(new User()));
 
         // Act & Assert
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            userService.registerUser(dto);
-        });
+        Exception exception = assertThrows(RuntimeException.class, 
+            () -> userService.registerUser(dto));
 
         assertTrue(exception.getMessage().contains("Email is already in use"));
         verify(userRepository, never()).save(any(User.class));

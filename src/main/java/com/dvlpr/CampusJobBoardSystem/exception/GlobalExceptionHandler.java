@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalExceptionHandler.class.getName());
+
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFound(ResourceNotFoundException ex, Model model) {
@@ -42,6 +44,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleGeneric(Exception ex, Model model) {
+        logger.warning("Unexpected error occurred: " + ex.getMessage());
         model.addAttribute("errorTitle", "Error");
         model.addAttribute("errorMessage", "An unexpected error occurred");
         model.addAttribute("statusCode", 500);

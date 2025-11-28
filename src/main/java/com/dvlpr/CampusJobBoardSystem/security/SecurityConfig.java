@@ -28,13 +28,15 @@ public class SecurityConfig {
 
     /**
      * Configures the security filter chain with URL-based authorization rules.
-     * 
+     * <p>
      * Access control:
-     * - Public: /, /login, /register, /saveUser, static resources
-     * - ADMIN: /admin/**
-     * - EMPLOYER: /employer/**
-     * - STUDENT: /student/**
-     * 
+     * <ul>
+     * <li>Public: /, /login, /register, /saveUser, static resources</li>
+     * <li>ADMIN: /admin/**</li>
+     * <li>EMPLOYER: /employer/**</li>
+     * <li>STUDENT: /student/**</li>
+     * </ul>
+     *
      * @param http HttpSecurity to configure
      * @return configured SecurityFilterChain
      * @throws Exception if configuration fails

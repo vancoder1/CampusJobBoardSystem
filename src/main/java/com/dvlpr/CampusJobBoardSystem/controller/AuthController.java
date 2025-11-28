@@ -59,7 +59,7 @@ public class AuthController {
                                Model model) {
         // Check for existing email (Custom validation)
         if (userService.findByEmail(userDto.getEmail()).isPresent()) {
-            result.rejectValue("email", null, "There is already an account registered with the same email");
+            result.rejectValue("email", "error.email.duplicate", "There is already an account registered with the same email");
         }
 
         if (result.hasErrors()) {

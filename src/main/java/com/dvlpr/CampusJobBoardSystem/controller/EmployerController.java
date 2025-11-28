@@ -52,8 +52,7 @@ public class EmployerController {
     @PostMapping("/job/save")
     public String saveJob(@Valid @ModelAttribute("job") Job job,
                           BindingResult bindingResult,
-                          RedirectAttributes redirectAttributes,
-                          Model model) {
+                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "employer/create-job";
         }
@@ -89,8 +88,7 @@ public class EmployerController {
     public String updateJob(@PathVariable Long id,
                             @Valid @ModelAttribute("job") Job updatedJob,
                             BindingResult bindingResult,
-                            RedirectAttributes redirectAttributes,
-                            Model model) {
+                            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             updatedJob.setId(id);
             return "employer/edit-job";

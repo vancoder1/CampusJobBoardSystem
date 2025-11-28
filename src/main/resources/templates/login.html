@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head-content}"></head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-content}">
+    <title>Campus Job Board</title>
+</head>
 <body>
 <div th:replace="~{fragments/header :: navbar}"></div>
 
@@ -25,12 +27,12 @@
 
                         <form th:action="@{/login}" method="post">
                             <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="username" class="form-control" placeholder="Enter your email" required>
+                                <label for="username" class="form-label">Email</label>
+                                <input type="email" name="username" id="username" class="form-control" placeholder="Enter your email" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="bi bi-box-arrow-in-right"></i> Login
