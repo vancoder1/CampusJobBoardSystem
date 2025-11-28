@@ -1,33 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head-content}"></head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 <div th:replace="~{fragments/header :: navbar}"></div>
 
-<div class="container mt-5">
-    <h2>Available Jobs</h2>
+<div class="content-wrapper flex-grow-1">
+    <div class="container mt-5">
+        <h2 class="mb-4">Available Jobs</h2>
 
-    <div th:if="${param.applied}" class="alert alert-success">Application submitted successfully!</div>
-    <div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}"></div>
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
 
-    <div class="row">
-        <div class="col-md-4 mb-4" th:each="job : ${jobs}">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${job.title}">Job Title</h5>
-                    <h6 class="card-subtitle mb-2 text-muted" th:text="${job.employer.fullName}">Company</h6>
-                    <p class="card-text" th:text="${job.description}">Desc</p>
-                    <p><strong>Salary:</strong> $<span th:text="${job.salary}"></span></p>
-                    <p><strong>Location:</strong> <span th:text="${job.location}"></span></p>
-                </div>
-                <div class="card-footer">
-                    <form th:action="@{/student/job/{id}/apply(id=${job.id})}" method="post">
-                        <button type="submit" class="btn btn-primary w-100">Apply Now</button>
-                    </form>
+        <div th:if="${#lists.isEmpty(jobs)}" class="alert alert-info">
+            No jobs available at the moment. Check back later!
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-4" th:each="job : ${jobs}">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0" th:text="${job.title}">Job Title</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            <i class="bi bi-building"></i> <span th:text="${job.employer.fullName}">Company</span>
+                        </h6>
+                        <p class="card-text" th:text="${#strings.abbreviate(job.description, 150)}">Description</p>
+                        <ul class="list-unstyled small">
+                            <li th:if="${job.salary != null}"><i class="bi bi-currency-dollar text-success"></i> $<span th:text="${#numbers.formatDecimal(job.salary, 1, 2)}"></span>/hr</li>
+                            <li th:if="${job.location != null}"><i class="bi bi-geo-alt text-primary"></i> <span th:text="${job.location}"></span></li>
+                            <li th:if="${job.deadline != null}"><i class="bi bi-calendar text-danger"></i> Deadline: <span th:text="${#temporals.format(job.deadline, 'MMM dd, yyyy')}"></span></li>
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <form th:action="@{/student/job/{id}/apply(id=${job.id})}" method="post">
+                            <button type="submit" class="btn btn-success w-100"><i class="bi bi-send"></i> Apply Now</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

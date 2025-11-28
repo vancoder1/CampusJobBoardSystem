@@ -8,19 +8,31 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Custom UserDetails implementation that wraps the User entity.
+ * Provides user authentication information to Spring Security.
+ */
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
 
+    /**
+     * Creates a CustomUserDetails instance wrapping the given user.
+     * 
+     * @param user the User entity to wrap
+     */
     public CustomUserDetails(User user) {
         this.user = user;
     }
 
+    /**
+     * Returns the authorities granted to the user.
+     * Maps the user's role to a Spring Security authority with ROLE_ prefix.
+     * 
+     * @return collection containing the user's authority
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Map our Enum Role to Spring Security Authority
-        // Spring Security expects roles to start with "ROLE_" usually,
-        // but we can also check authorities directly. Let's stick to standard convention.
         return Collections.singletonList(
                 new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
         );
@@ -31,28 +43,43 @@ public class CustomUserDetails implements UserDetails {
         return user.getPassword();
     }
 
+    /**
+     * Returns the username (email) used for authentication.
+     * 
+     * @return the user's email address
+     */
     @Override
     public String getUsername() {
-        return user.getEmail(); // We log in with Email
+        return user.getEmail();
     }
 
-    // Helper method to access the User entity in controllers later
+    /**
+     * Returns the underlying User entity.
+     * Useful for accessing user data in controllers.
+     * 
+     * @return the User entity
+     */
     public User getUser() {
         return user;
     }
 
     @Override
-    public boolean isAccountNonExpired() { return true; }
+    public boolean isAccountNonExpired() { 
+        return true; 
+    }
 
     @Override
     public boolean isAccountNonLocked() {
-        // Could check UserStatus.ACTIVE here if you want to block inactive users
         return true;
     }
 
     @Override
-    public boolean isCredentialsNonExpired() { return true; }
+    public boolean isCredentialsNonExpired() { 
+        return true; 
+    }
 
     @Override
-    public boolean isEnabled() { return true; }
+    public boolean isEnabled() { 
+        return true; 
+    }
 }

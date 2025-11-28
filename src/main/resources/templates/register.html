@@ -4,44 +4,61 @@
 <body>
 <div th:replace="~{fragments/header :: navbar}"></div>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">Register</div>
-                <div class="card-body">
-                    <form th:action="@{/saveUser}" th:object="${user}" method="post">
+<div class="content-wrapper">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-person-plus"></i> Create Account</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/saveUser}" th:object="${user}" method="post">
+                            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                                <strong>Please correct the following errors:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                                </ul>
+                            </div>
 
-                        <div class="mb-3">
-                            <label>Full Name</label>
-                            <input type="text" th:field="*{fullName}" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Email</label>
-                            <input type="email" th:field="*{email}" class="form-control" required>
-                            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></p>
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Password</label>
-                            <input type="password" th:field="*{password}" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label>I am a:</label>
-                            <select th:field="*{role}" class="form-select">
-                                <option value="STUDENT">Student</option>
-                                <option value="EMPLOYER">Employer</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-success w-100">Register</button>
-                    </form>
+                            <div class="mb-3">
+                                <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{fullName}" th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'" class="form-control" placeholder="Enter your full name" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" class="form-control" placeholder="Enter your email" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" th:field="*{password}" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" class="form-control" placeholder="Minimum 8 characters" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">I am a: <span class="text-danger">*</span></label>
+                                <select th:field="*{role}" class="form-select" required>
+                                    <option value="">-- Select Role --</option>
+                                    <option value="STUDENT">Student</option>
+                                    <option value="EMPLOYER">Employer</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-check-circle"></i> Register
+                            </button>
+                            <div class="text-center mt-3">
+                                <span class="text-muted">Already have an account?</span>
+                                <a th:href="@{/login}">Sign In</a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

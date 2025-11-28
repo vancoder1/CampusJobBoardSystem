@@ -8,11 +8,13 @@ import com.dvlpr.CampusJobBoardSystem.exception.ResourceNotFoundException;
 import com.dvlpr.CampusJobBoardSystem.repository.JobApplicationRepository;
 import com.dvlpr.CampusJobBoardSystem.repository.JobRepository;
 import com.dvlpr.CampusJobBoardSystem.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for job application operations.
+ */
 @Service
 public class ApplicationService {
 
@@ -20,41 +22,36 @@ public class ApplicationService {
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
 
-    @Autowired
     public ApplicationService(JobApplicationRepository applicationRepository,
-                              JobRepository jobRepository,
-                              UserRepository userRepository) {
+                              JobRepository jobRepository, UserRepository userRepository) {
         this.applicationRepository = applicationRepository;
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
     }
 
+    /** Apply for a job (prevents duplicates). */
     public void applyForJob(Long jobId, String studentEmail) {
         User student = userRepository.findByEmail(studentEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
-
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
-        // Check for duplicate application (Rubric Requirement)
         if (applicationRepository.findByJobIdAndStudentId(jobId, student.getId()).isPresent()) {
-            throw new DuplicateApplicationException("You have already applied for this job.");
+            throw new DuplicateApplicationException("You have already applied for this job");
         }
 
         JobApplication application = new JobApplication();
         application.setJob(job);
         application.setStudent(student);
-        // Default status is SUBMITTED
-
         applicationRepository.save(application);
     }
 
-    // Employer: See who applied to their job
+    /** Get applications for a job (employer view). */
     public List<JobApplication> getApplicationsForJob(Long jobId) {
         return applicationRepository.findByJobId(jobId);
     }
 
-    // Student: See their own applications
+    /** Get student's applications. */
     public List<JobApplication> getStudentApplications(String studentEmail) {
         User student = userRepository.findByEmail(studentEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));

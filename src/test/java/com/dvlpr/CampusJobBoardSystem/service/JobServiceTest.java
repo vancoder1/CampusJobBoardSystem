@@ -38,6 +38,7 @@ class JobServiceTest {
 
         Job job = new Job();
         job.setTitle("Java Developer");
+        job.setDescription("Looking for an experienced Java developer"); // Required field
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(employer));
 

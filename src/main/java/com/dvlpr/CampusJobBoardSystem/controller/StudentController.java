@@ -1,23 +1,35 @@
 package com.dvlpr.CampusJobBoardSystem.controller;
 
+import com.dvlpr.CampusJobBoardSystem.entity.Job;
+import com.dvlpr.CampusJobBoardSystem.entity.JobStatus;
+import com.dvlpr.CampusJobBoardSystem.exception.DuplicateApplicationException;
 import com.dvlpr.CampusJobBoardSystem.service.ApplicationService;
 import com.dvlpr.CampusJobBoardSystem.service.JobService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controller for student-specific operations.
+ * Handles job browsing, job details viewing, and job applications.
+ */
 @Controller
 @RequestMapping("/student")
 public class StudentController {
 
-    @Autowired
-    private JobService jobService;
+    private final JobService jobService;
+    private final ApplicationService applicationService;
 
-    @Autowired
-    private ApplicationService applicationService;
+    public StudentController(JobService jobService, ApplicationService applicationService) {
+        this.jobService = jobService;
+        this.applicationService = applicationService;
+    }
 
+    /**
+     * Display student dashboard with approved jobs.
+     */
     @GetMapping("/dashboard")
     public String listJobs(Model model) {
         // Requirement: View only admin-approved jobs
@@ -25,6 +37,25 @@ public class StudentController {
         return "student/dashboard";
     }
 
+    /**
+     * View detailed job description.
+     */
+    @GetMapping("/job/{id}")
+    public String viewJobDetails(@PathVariable Long id, Model model) {
+        Job job = jobService.getJobById(id);
+        
+        // Only show approved jobs to students
+        if (job.getStatus() != JobStatus.APPROVED) {
+            return "redirect:/student/dashboard?error=Job not available";
+        }
+        
+        model.addAttribute("job", job);
+        return "student/job-details";
+    }
+
+    /**
+     * View student's applications.
+     */
     @GetMapping("/my-applications")
     public String myApplications(Model model) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -32,14 +63,22 @@ public class StudentController {
         return "student/my-applications";
     }
 
+    /**
+     * Apply for a job.
+     */
     @PostMapping("/job/{id}/apply")
-    public String applyJob(@PathVariable Long id) {
+    public String applyJob(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         try {
             applicationService.applyForJob(id, email);
-            return "redirect:/student/dashboard?applied";
-        } catch (RuntimeException e) {
-            return "redirect:/student/dashboard?error=" + e.getMessage();
+            redirectAttributes.addFlashAttribute("successMessage", "Application submitted successfully!");
+            return "redirect:/student/dashboard";
+        } catch (DuplicateApplicationException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/student/dashboard";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to apply: " + e.getMessage());
+            return "redirect:/student/dashboard";
         }
     }
 }

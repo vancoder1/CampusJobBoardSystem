@@ -1,12 +1,14 @@
 package com.dvlpr.CampusJobBoardSystem.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * Entity representing a user (Student, Employer, or Admin).
+ */
 @Entity
-@Table(name = "`USER`") // Escaping reserved keyword
+@Table(name = "`USER`")
 public class User {
 
     @Id
@@ -14,36 +16,37 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
+    @NotBlank(message = "Full name is required")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
+    @NotBlank(message = "Email is required")
+    @Email(message = "Please provide a valid email address")
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Password is required")
     @Column(nullable = false)
     private String password;
 
+    @NotNull(message = "Role is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status = UserStatus.ACTIVE; // Default
+    private UserStatus status = UserStatus.ACTIVE;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // Relationship: One Employer -> Many Jobs
-    @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Job> jobs = new ArrayList<>();
-
-    // Standard Getters and Setters
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Generate Getters, Setters, No-Args Constructor, and All-Args Constructor
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getFullName() { return fullName; }
@@ -56,8 +59,5 @@ public class User {
     public void setRole(UserRole role) { this.role = role; }
     public UserStatus getStatus() { return status; }
     public void setStatus(UserStatus status) { this.status = status; }
-    public List<Job> getJobs() { return jobs; }
-        public void setJobs(List<Job> jobs) { this.jobs = jobs; }
-
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

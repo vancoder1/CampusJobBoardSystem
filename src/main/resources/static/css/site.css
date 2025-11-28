@@ -1,0 +1,25 @@
+/* site.css - layout tweaks to keep footer at the bottom */
+html, body {
+    height: 100%;
+}
+
+/* Make the body a column flex container so footer can be pushed to the bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Allow the main page content to grow/shrink and take available space */
+body > .container,
+body > .container-fluid,
+body > main,
+#main-content {
+    flex: 1 0 auto;
+}
+
+/* Footer should take remaining space and sit at the bottom */
+footer {
+    margin-top: auto;
+}
+

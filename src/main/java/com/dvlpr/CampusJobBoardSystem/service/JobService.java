@@ -6,65 +6,83 @@ import com.dvlpr.CampusJobBoardSystem.entity.User;
 import com.dvlpr.CampusJobBoardSystem.exception.ResourceNotFoundException;
 import com.dvlpr.CampusJobBoardSystem.repository.JobRepository;
 import com.dvlpr.CampusJobBoardSystem.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for job-related operations.
+ */
 @Service
 public class JobService {
 
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
 
-    @Autowired
     public JobService(JobRepository jobRepository, UserRepository userRepository) {
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
     }
 
-    // Employer: Post a job
-        public void postJob(Job job, String employerEmail) {
-        // Validate required fields
-        if (job.getTitle() == null || job.getTitle().trim().isEmpty()) {
-            throw new IllegalArgumentException("Job title is required.");
-        }
-        if (job.getDescription() == null || job.getDescription().trim().isEmpty()) {
-            throw new IllegalArgumentException("Job description is required.");
-        }
+    /** Post a new job (status: PENDING until admin approves). */
+    public void postJob(Job job, String employerEmail) {
         User employer = userRepository.findByEmail(employerEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Employer not found"));
-
         job.setEmployer(employer);
-        job.setStatus(JobStatus.PENDING); // Default per requirements
+        job.setStatus(JobStatus.PENDING);
         jobRepository.save(job);
     }
 
-    // Student: View only APPROVED jobs
+    /** Update an existing job (resets to PENDING). */
+    public void updateJob(Long jobId, Job updatedJob, String employerEmail) {
+        Job job = getJobById(jobId);
+        if (!job.getEmployer().getEmail().equals(employerEmail)) {
+            throw new IllegalArgumentException("Unauthorized to update this job");
+        }
+        job.setTitle(updatedJob.getTitle());
+        job.setDescription(updatedJob.getDescription());
+        job.setLocation(updatedJob.getLocation());
+        job.setSalary(updatedJob.getSalary());
+        job.setCategory(updatedJob.getCategory());
+        job.setDeadline(updatedJob.getDeadline());
+        job.setStatus(JobStatus.PENDING);
+        jobRepository.save(job);
+    }
+
+    /** Delete a job. */
+    public void deleteJob(Long jobId, String employerEmail) {
+        Job job = getJobById(jobId);
+        if (!job.getEmployer().getEmail().equals(employerEmail)) {
+            throw new IllegalArgumentException("Unauthorized to delete this job");
+        }
+        jobRepository.delete(job);
+    }
+
+    /** Get all approved jobs (for students). */
     public List<Job> getAllApprovedJobs() {
         return jobRepository.findByStatus(JobStatus.APPROVED);
     }
 
-    // Employer: View their own jobs
+    /** Get jobs by employer. */
     public List<Job> getJobsByEmployer(String email) {
         User employer = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return jobRepository.findByEmployerId(employer.getId());
     }
 
-    // Admin: View all jobs (to approve/reject)
+    /** Get all jobs (for admin). */
     public List<Job> getAllJobs() {
         return jobRepository.findAll();
     }
 
-    // Admin: Approve or Reject
+    /** Update job status (admin approve/reject). */
     public void updateJobStatus(Long jobId, JobStatus status) {
-        Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+        Job job = getJobById(jobId);
         job.setStatus(status);
         jobRepository.save(job);
     }
 
+    /** Get job by ID. */
     public Job getJobById(Long id) {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found"));

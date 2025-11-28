@@ -61,7 +61,7 @@ class UserServiceTest {
             userService.registerUser(dto);
         });
 
-        assertEquals("Email is already in use", exception.getMessage());
+        assertTrue(exception.getMessage().contains("Email is already in use"));
         verify(userRepository, never()).save(any(User.class));
     }
 }

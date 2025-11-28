@@ -1,39 +1,64 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head-content}"></head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 <div th:replace="~{fragments/header :: navbar}"></div>
 
-<div class="container mt-5">
-    <h2>Admin Dashboard - Manage Jobs</h2>
-    <table class="table table-bordered">
-        <thead class="table-dark">
-        <tr>
-            <th>Job Title</th>
-            <th>Employer</th>
-            <th>Current Status</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="job : ${jobs}">
-            <td th:text="${job.title}"></td>
-            <td th:text="${job.employer.fullName}"></td>
-            <td th:text="${job.status}"></td>
-            <td>
-                <div th:if="${job.status.name() == 'PENDING'}">
-                    <form th:action="@{/admin/job/{id}/approve(id=${job.id})}" method="post" style="display:inline;">
-                        <button class="btn btn-success btn-sm">Approve</button>
-                    </form>
-                    <form th:action="@{/admin/job/{id}/reject(id=${job.id})}" method="post" style="display:inline;">
-                        <button class="btn btn-danger btn-sm">Reject</button>
-                    </form>
-                </div>
-                <span th:unless="${job.status.name() == 'PENDING'}" class="text-muted">No actions</span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div class="content-wrapper flex-grow-1">
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Admin - Manage Jobs</h2>
+            <a th:href="@{/admin/users}" class="btn btn-secondary"><i class="bi bi-people"></i> Manage Users</a>
+        </div>
+
+        <div th:if="${param.approved}" class="alert alert-success alert-dismissible fade show">
+            Job approved. <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${param.rejected}" class="alert alert-warning alert-dismissible fade show">
+            Job rejected. <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${#lists.isEmpty(jobs)}" class="alert alert-info">No job postings found.</div>
+
+        <table th:if="${!#lists.isEmpty(jobs)}" class="table table-bordered table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Job Title</th>
+                <th>Employer</th>
+                <th>Posted</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="job : ${jobs}">
+                <td th:text="${job.id}"></td>
+                <td th:text="${job.title}"></td>
+                <td th:text="${job.employer.fullName}"></td>
+                <td th:text="${#temporals.format(job.createdAt, 'MMM dd, yyyy')}"></td>
+                <td>
+                    <span th:if="${job.status.name() == 'APPROVED'}" class="badge bg-success">Approved</span>
+                    <span th:if="${job.status.name() == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
+                    <span th:if="${job.status.name() == 'REJECTED'}" class="badge bg-danger">Rejected</span>
+                </td>
+                <td>
+                    <div th:if="${job.status.name() == 'PENDING'}">
+                        <form th:action="@{/admin/job/{id}/approve(id=${job.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-success btn-sm">Approve</button>
+                        </form>
+                        <form th:action="@{/admin/job/{id}/reject(id=${job.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    </div>
+                    <span th:unless="${job.status.name() == 'PENDING'}" class="text-muted">-</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

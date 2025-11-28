@@ -4,14 +4,16 @@
 <body>
 <div th:replace="~{fragments/header :: navbar}"></div>
 
-<div class="container mt-5 text-center">
-    <div class="jumbotron">
-        <h1 class="display-4">Welcome to Campus Job Board</h1>
-        <p class="lead">Connecting Students with On-Campus Opportunities.</p>
-        <hr class="my-4">
-        <p>Are you a student looking for work? Or an employer looking for talent?</p>
-        <a class="btn btn-primary btn-lg" href="/register" role="button">Get Started</a>
-        <a class="btn btn-outline-secondary btn-lg" href="/login" role="button">Login</a>
+<div class="content-wrapper">
+    <div class="container mt-5 text-center">
+        <div class="py-5">
+            <h1 class="display-4">Welcome to Campus Job Board</h1>
+            <p class="lead">Connecting Students with On-Campus Opportunities.</p>
+            <hr class="my-4">
+            <p>Are you a student looking for work? Or an employer looking for talent?</p>
+            <a class="btn btn-primary btn-lg" th:href="@{/register}">Get Started</a>
+            <a class="btn btn-outline-secondary btn-lg" th:href="@{/login}">Login</a>
+        </div>
     </div>
 </div>
 

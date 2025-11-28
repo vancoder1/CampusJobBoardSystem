@@ -1,37 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head-content}"></head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 <div th:replace="~{fragments/header :: navbar}"></div>
 
-<div class="container mt-5">
-    <h2>My Job Postings</h2>
-    <a href="/employer/job/new" class="btn btn-primary mb-3">Post New Job</a>
+<div class="content-wrapper flex-grow-1">
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>My Job Postings</h2>
+            <a th:href="@{/employer/job/new}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Post New Job</a>
+        </div>
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-        <tr>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="job : ${jobs}">
-            <td th:text="${job.title}"></td>
-            <td th:text="${job.category}"></td>
-            <td>
-                <span th:if="${job.status.name() == 'APPROVED'}" class="badge bg-success">Approved</span>
-                <span th:if="${job.status.name() == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
-                <span th:if="${job.status.name() == 'REJECTED'}" class="badge bg-danger">Rejected</span>
-            </td>
-            <td>
-                <a th:href="@{/employer/job/{id}/applications(id=${job.id})}" class="btn btn-info btn-sm">View Applicants</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show">
+            Job posted successfully! It will be reviewed by an admin.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${param.updated}" class="alert alert-info alert-dismissible fade show">
+            Job updated! Sent for re-approval.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${param.deleted}" class="alert alert-warning alert-dismissible fade show">
+            Job deleted.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${#lists.isEmpty(jobs)}" class="alert alert-info">
+            You haven't posted any jobs yet. <a th:href="@{/employer/job/new}">Post your first job!</a>
+        </div>
+
+        <table th:if="${!#lists.isEmpty(jobs)}" class="table table-bordered table-striped table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="job : ${jobs}">
+                <td th:text="${job.title}"></td>
+                <td th:text="${job.category} ?: '-'"></td>
+                <td th:text="${job.location} ?: '-'"></td>
+                <td>
+                    <span th:if="${job.status.name() == 'APPROVED'}" class="badge bg-success">Approved</span>
+                    <span th:if="${job.status.name() == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
+                    <span th:if="${job.status.name() == 'REJECTED'}" class="badge bg-danger">Rejected</span>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a th:href="@{/employer/job/{id}/applications(id=${job.id})}" class="btn btn-info btn-sm">Applicants</a>
+                        <a th:href="@{/employer/job/{id}/edit(id=${job.id})}" class="btn btn-warning btn-sm">Edit</a>
+                        <form th:action="@{/employer/job/{id}/delete(id=${job.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this job?')">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
