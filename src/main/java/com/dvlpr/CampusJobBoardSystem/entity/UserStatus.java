@@ -5,8 +5,8 @@ package com.dvlpr.CampusJobBoardSystem.entity;
  * Used to enable/disable user accounts.
  */
 public enum UserStatus {
-    /** User account is active and can login */
+    /** User account is active and can log in */
     ACTIVE,
-    /** User account is disabled and cannot login */
+    /** User account is disabled and cannot log in */
     INACTIVE
 }
