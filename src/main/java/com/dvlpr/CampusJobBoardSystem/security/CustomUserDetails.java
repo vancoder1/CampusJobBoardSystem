@@ -12,23 +12,20 @@ import java.util.Collections;
  * Custom UserDetails implementation that wraps the User entity.
  * Provides user authentication information to Spring Security.
  */
-public class CustomUserDetails implements UserDetails {
-
-    private final User user;
+public record CustomUserDetails(User user) implements UserDetails {
 
     /**
      * Creates a CustomUserDetails instance wrapping the given user.
-     * 
+     *
      * @param user the User entity to wrap
      */
-    public CustomUserDetails(User user) {
-        this.user = user;
+    public CustomUserDetails {
     }
 
     /**
      * Returns the authorities granted to the user.
      * Maps the user's role to a Spring Security authority with ROLE_ prefix.
-     * 
+     *
      * @return collection containing the user's authority
      */
     @Override
@@ -45,7 +42,7 @@ public class CustomUserDetails implements UserDetails {
 
     /**
      * Returns the username (email) used for authentication.
-     * 
+     *
      * @return the user's email address
      */
     @Override
@@ -56,16 +53,17 @@ public class CustomUserDetails implements UserDetails {
     /**
      * Returns the underlying User entity.
      * Useful for accessing user data in controllers.
-     * 
+     *
      * @return the User entity
      */
-    public User getUser() {
+    @Override
+    public User user() {
         return user;
     }
 
     @Override
-    public boolean isAccountNonExpired() { 
-        return true; 
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
     @Override
@@ -74,12 +72,12 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
-    public boolean isCredentialsNonExpired() { 
-        return true; 
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
     @Override
-    public boolean isEnabled() { 
-        return true; 
+    public boolean isEnabled() {
+        return true;
     }
 }
