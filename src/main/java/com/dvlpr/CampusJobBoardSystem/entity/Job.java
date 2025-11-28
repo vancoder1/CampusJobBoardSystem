@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.dvlpr.CampusJobBoardSystem.entity.JobStatus;
+import com.dvlpr.CampusJobBoardSystem.entity.User;
+
 /**
  * Entity representing a job posting in the system.
  * Jobs are created by employers and can be applied to by students.
@@ -47,7 +50,7 @@ public class Job {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "employer_id", nullable = false)
     private User employer;
 
