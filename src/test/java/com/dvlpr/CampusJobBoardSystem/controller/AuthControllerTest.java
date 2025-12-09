@@ -4,10 +4,12 @@ import com.dvlpr.CampusJobBoardSystem.dto.UserRegistrationDto;
 import com.dvlpr.CampusJobBoardSystem.entity.User;
 import com.dvlpr.CampusJobBoardSystem.security.SecurityConfig;
 import com.dvlpr.CampusJobBoardSystem.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,14 +29,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Tests authentication-related endpoints: home, login, registration, and dashboard routing.
  */
 @WebMvcTest(AuthController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, AuthControllerTest.TestConfig.class})
 class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private UserService userService;
+
+    @BeforeEach
+    void setUp() {
+        // Reset mocks to clear invocation counts between tests
+        reset(userService);
+    }
 
     // ==================== Home Page Tests ====================
 
@@ -189,5 +197,13 @@ class AuthControllerTest {
     void testDashboard_Unauthenticated_RedirectsToLogin() throws Exception {
         mockMvc.perform(get("/dashboard"))
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public UserService userService() {
+            return mock(UserService.class);
+        }
     }
 }

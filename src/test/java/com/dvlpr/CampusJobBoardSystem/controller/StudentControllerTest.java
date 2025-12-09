@@ -9,7 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,16 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Tests student-specific endpoints: job browsing, job details, and applications.
  */
 @WebMvcTest(StudentController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, StudentControllerTest.TestConfig.class})
 class StudentControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private JobService jobService;
 
-    @MockBean
+    @Autowired
     private ApplicationService applicationService;
 
     private Job testJob;
@@ -49,6 +50,9 @@ class StudentControllerTest {
 
     @BeforeEach
     void setUp() {
+        // Reset mocks to clear invocation counts between tests
+        reset(jobService, applicationService);
+
         testEmployer = new User();
         testEmployer.setId(1L);
         testEmployer.setEmail("employer@test.com");
@@ -213,5 +217,18 @@ class StudentControllerTest {
     void testDashboard_Unauthenticated_RedirectsToLogin() throws Exception {
         mockMvc.perform(get("/student/dashboard"))
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public JobService jobService() {
+            return mock(JobService.class);
+        }
+
+        @Bean
+        public ApplicationService applicationService() {
+            return mock(ApplicationService.class);
+        }
     }
 }

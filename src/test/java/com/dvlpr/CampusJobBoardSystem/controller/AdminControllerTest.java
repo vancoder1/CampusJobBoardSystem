@@ -8,10 +8,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,16 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Tests admin-specific endpoints: job approval/rejection and user management.
  */
 @WebMvcTest(AdminController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, AdminControllerTest.TestConfig.class})
 class AdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private JobService jobService;
 
-    @MockBean
+    @Autowired
     private AdminService adminService;
 
     private Job testJob;
@@ -49,6 +52,9 @@ class AdminControllerTest {
 
     @BeforeEach
     void setUp() {
+        // Reset mocks to clear invocation counts between tests
+        reset(jobService, adminService);
+
         testEmployer = new User();
         testEmployer.setId(1L);
         testEmployer.setEmail("employer@test.com");
@@ -247,5 +253,18 @@ class AdminControllerTest {
     void testDashboard_Unauthenticated_RedirectsToLogin() throws Exception {
         mockMvc.perform(get("/admin/dashboard"))
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public JobService jobService() {
+            return mock(JobService.class);
+        }
+
+        @Bean
+        public AdminService adminService() {
+            return mock(AdminService.class);
+        }
     }
 }

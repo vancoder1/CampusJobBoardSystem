@@ -8,7 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,16 +32,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Tests employer-specific endpoints: job CRUD and viewing applications.
  */
 @WebMvcTest(EmployerController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, EmployerControllerTest.TestConfig.class})
 class EmployerControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private JobService jobService;
 
-    @MockBean
+    @Autowired
     private ApplicationService applicationService;
 
     private Job testJob;
@@ -48,6 +49,9 @@ class EmployerControllerTest {
 
     @BeforeEach
     void setUp() {
+        // Reset mocks to clear invocation counts between tests
+        reset(jobService, applicationService);
+
         testEmployer = new User();
         testEmployer.setId(1L);
         testEmployer.setEmail("employer@test.com");
@@ -294,5 +298,18 @@ class EmployerControllerTest {
     void testDashboard_Unauthenticated_RedirectsToLogin() throws Exception {
         mockMvc.perform(get("/employer/dashboard"))
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public JobService jobService() {
+            return mock(JobService.class);
+        }
+
+        @Bean
+        public ApplicationService applicationService() {
+            return mock(ApplicationService.class);
+        }
     }
 }
