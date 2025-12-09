@@ -10,6 +10,57 @@
     <div class="container mt-5">
         <h2 class="mb-4">Available Jobs</h2>
 
+        <!-- Search and Filter Section -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <form th:action="@{/student/search}" method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="keyword" class="form-label">Search Jobs</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="keyword" name="keyword"
+                                   th:value="${searchKeyword}" placeholder="Search by title, description...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="">All Categories</option>
+                            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"
+                                    th:selected="${cat == selectedCategory}">Category</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="location" class="form-label">Location</label>
+                        <select class="form-select" id="location" name="location">
+                            <option value="">All Locations</option>
+                            <option th:each="loc : ${locations}" th:value="${loc}" th:text="${loc}"
+                                    th:selected="${loc == selectedLocation}">Location</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-filter"></i> Search
+                        </button>
+                    </div>
+                </form>
+                <div class="mt-2">
+                    <a th:href="@{/student/dashboard}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-x-circle"></i> Clear Filters
+                    </a>
+                    <span th:if="${searchKeyword}" class="badge bg-info ms-2">
+                        Searching: "<span th:text="${searchKeyword}"></span>"
+                    </span>
+                    <span th:if="${selectedCategory}" class="badge bg-success ms-2">
+                        Category: <span th:text="${selectedCategory}"></span>
+                    </span>
+                    <span th:if="${selectedLocation}" class="badge bg-warning text-dark ms-2">
+                        Location: <span th:text="${selectedLocation}"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
         <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
             <span th:text="${successMessage}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

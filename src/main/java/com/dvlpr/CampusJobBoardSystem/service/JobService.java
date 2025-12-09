@@ -87,4 +87,62 @@ public class JobService {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
     }
+
+    /**
+     * Search approved jobs by keyword.
+     * Searches in title, description, location, and category.
+     *
+     * @param keyword the search keyword
+     * @return list of matching approved jobs
+     */
+    public List<Job> searchApprovedJobs(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllApprovedJobs();
+        }
+        return jobRepository.searchByKeywordAndStatus(keyword.trim(), JobStatus.APPROVED);
+    }
+
+    /**
+     * Get approved jobs by category.
+     *
+     * @param category the job category
+     * @return list of approved jobs in the specified category
+     */
+    public List<Job> getApprovedJobsByCategory(String category) {
+        if (category == null || category.trim().isEmpty()) {
+            return getAllApprovedJobs();
+        }
+        return jobRepository.findByCategoryIgnoreCaseAndStatus(category.trim(), JobStatus.APPROVED);
+    }
+
+    /**
+     * Get approved jobs by location.
+     *
+     * @param location the job location
+     * @return list of approved jobs in the specified location
+     */
+    public List<Job> getApprovedJobsByLocation(String location) {
+        if (location == null || location.trim().isEmpty()) {
+            return getAllApprovedJobs();
+        }
+        return jobRepository.findByLocationIgnoreCaseContainingAndStatus(location.trim(), JobStatus.APPROVED);
+    }
+
+    /**
+     * Get all distinct categories from approved jobs.
+     *
+     * @return list of distinct categories
+     */
+    public List<String> getAvailableCategories() {
+        return jobRepository.findDistinctCategoriesByStatus(JobStatus.APPROVED);
+    }
+
+    /**
+     * Get all distinct locations from approved jobs.
+     *
+     * @return list of distinct locations
+     */
+    public List<String> getAvailableLocations() {
+        return jobRepository.findDistinctLocationsByStatus(JobStatus.APPROVED);
+    }
 }

@@ -34,6 +34,42 @@ public class StudentController {
     public String listJobs(Model model) {
         // Requirement: View only admin-approved jobs
         model.addAttribute("jobs", jobService.getAllApprovedJobs());
+        model.addAttribute("categories", jobService.getAvailableCategories());
+        model.addAttribute("locations", jobService.getAvailableLocations());
+        return "student/dashboard";
+    }
+
+    /**
+     * Search and filter jobs.
+     * Supports keyword search and filtering by category or location.
+     */
+    @GetMapping("/search")
+    public String searchJobs(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String location,
+            Model model) {
+
+        java.util.List<Job> jobs;
+
+        // Priority: keyword search > category filter > location filter
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            jobs = jobService.searchApprovedJobs(keyword);
+            model.addAttribute("searchKeyword", keyword);
+        } else if (category != null && !category.trim().isEmpty()) {
+            jobs = jobService.getApprovedJobsByCategory(category);
+            model.addAttribute("selectedCategory", category);
+        } else if (location != null && !location.trim().isEmpty()) {
+            jobs = jobService.getApprovedJobsByLocation(location);
+            model.addAttribute("selectedLocation", location);
+        } else {
+            jobs = jobService.getAllApprovedJobs();
+        }
+
+        model.addAttribute("jobs", jobs);
+        model.addAttribute("categories", jobService.getAvailableCategories());
+        model.addAttribute("locations", jobService.getAvailableLocations());
+
         return "student/dashboard";
     }
 
