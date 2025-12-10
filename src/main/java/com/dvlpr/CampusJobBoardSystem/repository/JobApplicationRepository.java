@@ -2,6 +2,8 @@ package com.dvlpr.CampusJobBoardSystem.repository;
 
 import com.dvlpr.CampusJobBoardSystem.entity.JobApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +29,16 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
      * @return list of applications by the student
      */
     List<JobApplication> findByStudentId(Long studentId);
+
+    /**
+     * Find all applications submitted by a specific student with job details eagerly fetched.
+     * This avoids LazyInitializationException when accessing job properties in the view.
+     *
+     * @param studentId the student's user ID
+     * @return list of applications by the student with job data loaded
+     */
+    @Query("SELECT a FROM JobApplication a JOIN FETCH a.job WHERE a.student.id = :studentId")
+    List<JobApplication> findByStudentIdWithJob(@Param("studentId") Long studentId);
 
     /**
      * Find a specific application by job and student.

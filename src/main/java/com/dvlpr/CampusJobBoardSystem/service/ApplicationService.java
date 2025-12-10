@@ -51,10 +51,10 @@ public class ApplicationService {
         return applicationRepository.findByJobId(jobId);
     }
 
-    /** Get student's applications. */
+    /** Get student's applications with job details. */
     public List<JobApplication> getStudentApplications(String studentEmail) {
         User student = userRepository.findByEmail(studentEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
-        return applicationRepository.findByStudentId(student.getId());
+        return applicationRepository.findByStudentIdWithJob(student.getId());
     }
 }
