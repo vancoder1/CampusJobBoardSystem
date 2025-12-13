@@ -23,6 +23,16 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     List<JobApplication> findByJobId(Long jobId);
 
     /**
+     * Find all applications for a specific job with student details eagerly fetched.
+     * This avoids LazyInitializationException when accessing student properties in the view.
+     *
+     * @param jobId the ID of the job
+     * @return list of applications for the job with student data loaded
+     */
+    @Query("SELECT a FROM JobApplication a JOIN FETCH a.student WHERE a.job.id = :jobId")
+    List<JobApplication> findByJobIdWithStudent(@Param("jobId") Long jobId);
+
+    /**
      * Find all applications submitted by a specific student.
      * 
      * @param studentId the student's user ID

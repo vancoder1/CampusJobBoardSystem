@@ -48,7 +48,7 @@ public class ApplicationService {
 
     /** Get applications for a job (employer view). */
     public List<JobApplication> getApplicationsForJob(Long jobId) {
-        return applicationRepository.findByJobId(jobId);
+        return applicationRepository.findByJobIdWithStudent(jobId);
     }
 
     /** Get student's applications with job details. */
